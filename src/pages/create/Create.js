@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router'
 import { useFetch } from '../../hooks/useFetch'
 
 // styles
@@ -19,6 +20,14 @@ export default function Create() {
         e.preventDefault()
         postData({ title, ingredients, method, cookingTime: cookingTime + ' minutes'})
     }
+
+    let navigate = useNavigate()
+
+    useEffect(() => {
+        if (data){
+            navigate('/')
+        }
+    }, [data, navigate])
 
     const handleAdd = (e) => {
         e.preventDefault()

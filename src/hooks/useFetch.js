@@ -6,6 +6,7 @@ export const useFetch = (url, method = "GET") => {
   const [error, setError] = useState(null)
   const [options, setOptions] = useState(null)
   
+  // Function for POST req
   const postData = (postData) => {
     setOptions({
       method: 'POST',
@@ -15,8 +16,10 @@ export const useFetch = (url, method = "GET") => {
       body: JSON.stringify(postData)
     })
   }
-
+  // runs once when component is loaded first time.
   useEffect(() => {
+
+    // Abort Controller to abort fetch requests if needed.
     const controller = new AbortController()
 
     const fetchData = async (fetchOptions) => {
@@ -24,15 +27,20 @@ export const useFetch = (url, method = "GET") => {
       
       try {
         const res = await fetch(url, { ...fetchOptions, signal: controller.signal })
+        
+        // if there is a 404 error / if response is NOT ok.
         if(!res.ok) {
           throw new Error(res.statusText)
         }
+        // If there is no error
         const data = await res.json()
-
         setIsPending(false)
         setData(data)
         setError(null)
+
       } catch (err) {
+
+        // If the fetch is interrupted
         if (err.name === "AbortError") {
           console.log("the fetch was aborted")
         } else {
@@ -49,7 +57,7 @@ export const useFetch = (url, method = "GET") => {
       fetchData(options)
     }
 
-
+    // Cleanup function - to abort fetch requests - useEffect cleanup
     return () => {
       controller.abort()
     }
